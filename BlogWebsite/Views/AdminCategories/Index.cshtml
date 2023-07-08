@@ -1,0 +1,54 @@
+﻿@model IEnumerable<BlogWebsite.Models.Category>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Index";
+}
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý danh mục</h1>
+    <p class="mb-4">Tổng số danh mục: <span class="text-primary">@Model.Count()</span> </p>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary d-inline-block">Danh sách danh mục</h6>
+            <a class="btn btn-primary ml-5" href="/Admin/CreateCategory" role="button">Thêm danh mục</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive-md">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Option</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.CategoryName</td>
+                                <td>@item.CategoryDescription</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                    <a onclick="deleteCategoryFunction(@item.Id)" href="#" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                                </td>
+                            </tr>
+                        }
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function deleteCategoryFunction(id) {
+        $('#deleteModal .btn-primary').attr('href', '/Admin/DeleteCategory/' + id);
+    }
+</script>

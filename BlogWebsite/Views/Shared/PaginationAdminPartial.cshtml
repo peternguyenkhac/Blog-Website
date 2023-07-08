@@ -1,0 +1,57 @@
+﻿@model PagedList.IPagedList<BlogWebsite.Models.Article>
+@using PagedList.Mvc
+@using PagedList
+
+
+<div class="col-sm-12 col-md-7">
+    <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+        <ul class="pagination d-flex justify-content-center">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="paginate_button page-item previous" id="dataTable_previous">
+                    <a href="@Url.Action(ViewData["Title"].ToString(), new { page = Model.PageNumber - 1, q = ViewBag.SearchString, categoryId = ViewBag.CategorySelectlist.SelectedValue ,sortOrder = ViewBag.OrderSelectlist.SelectedValue })"
+                       aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                </li>
+
+            }
+            else
+            {
+                <li class="paginate_button page-item previous disabled" id="dataTable_previous">
+                    <a href="#" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                if (i == Model.PageNumber)
+                {
+                    <li class="paginate_button page-item active" id="dataTable_previous">
+                        <a href="@Url.Action(ViewData["Title"].ToString(), new { page = i, q = ViewBag.SearchString, categoryId = ViewBag.CategorySelectlist.SelectedValue ,sortOrder = ViewBag.OrderSelectlist.SelectedValue })"
+                           aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">@i</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="paginate_button page-item" id="dataTable_previous">
+                        <a href="@Url.Action(ViewData["Title"].ToString(), new { page = i, q = ViewBag.SearchString, categoryId = ViewBag.CategorySelectlist.SelectedValue ,sortOrder = ViewBag.OrderSelectlist.SelectedValue })"
+                           aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">@i</a>
+                    </li>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="paginate_button page-item next" id="dataTable_previous">
+                    <a href="@Url.Action(ViewData["Title"].ToString(), new { page = Model.PageNumber + 1, q = ViewBag.SearchString, categoryId = ViewBag.CategorySelectlist.SelectedValue ,sortOrder = ViewBag.OrderSelectlist.SelectedValue })"
+                       aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="paginate_button page-item next disabled" id="dataTable_next">
+                    <a href="#" class="page-link">Next</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

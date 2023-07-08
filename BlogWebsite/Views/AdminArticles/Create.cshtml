@@ -1,0 +1,119 @@
+﻿@model BlogWebsite.Models.Article
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Create";
+}
+
+<div class="container-fluid pl-5">
+    <h1>Thêm bài viết mới</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="ArticleTitle" class="control-label"></label>
+                    <input asp-for="ArticleTitle" class="form-control" />
+                    <span asp-validation-for="ArticleTitle" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArticleDescription" class="control-label"></label>
+                    <input asp-for="ArticleDescription" class="form-control" />
+                    <span asp-validation-for="ArticleDescription" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArticleThumb" class="control-label"></label>
+                    <input type="hidden" asp-for="ArticleThumb" class="form-control" />
+                    <span asp-validation-for="ArticleThumb" class="text-danger"></span>
+                    <div class="mb-2">
+                        <img id="article-thumb" width="150px" height="90px" style="object-fit: cover"/>
+                    </div>
+                    <button id="btnInsertImage" type="button" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#insertImageModal">
+                        <i class="fa fa-sharp fa-regular fa-image"></i> Chọn ảnh
+                    </button>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label"></label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategorySelectlist"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Source" class="control-label"></label>
+                    <input asp-for="Source" class="form-control" />
+                    <span asp-validation-for="Source" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArticleContent" class="control-label"></label>
+                    <textarea id="summernote" asp-for="ArticleContent" class="form-control"></textarea>
+                    <span asp-validation-for="ArticleContent" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+</div>
+
+
+@section scripts {
+    <script>
+        $('#summernote').summernote({
+            placeholder: 'Nhập nội dung bài viết',
+            width: 700,
+            height: 400,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0]);
+                }
+            }
+        });
+
+        function sendFile(file) {
+            var formData = new FormData();
+            formData.append("file", file);
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: '/Admin/UploadImage',
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (url) {
+                    var img = $('<img>').attr('src', url);
+                    $('#summernote').summernote('insertNode', img[0]);
+                },
+                error: function (xhr, status, error) {
+                    
+                }
+            });
+        }
+
+        function UpLoadImageThumb() {
+            var formData = new FormData();
+            formData.append('file', formData.append('file', $('#image-file')[0].files[0]));
+            $.ajax({
+                url: '/Admin/UploadImage',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#article-thumb').attr('src', data);
+                    $('#insertImageModal').modal('hide');
+                    $('#ArticleThumb').val(data);
+                }
+            });
+        }
+
+    </script>
+    @Html.Partial("_ValidationScriptsPartial")
+}
+

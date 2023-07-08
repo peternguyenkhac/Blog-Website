@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Article>
+
+
+    <div>
+        <div class="fh5co_heading fh5co_heading_border_bottom py-2 mb-4">Most Popular</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <a href="@Url.Action("DetailsArticle", "Home", new {slug = item.ArticleTitle.Replace(" ","-"), id = item.Id })">
+            <div class="row pb-3">
+                <div class="col-5 align-self-center">
+                    <img src="@item.ArticleThumb" alt="img" class="fh5co_most_trading" />
+                </div>
+                <div class="col-7 paddding">
+                    <div class="most_fh5co_treding_font">
+                        @item.ArticleTitle
+                    </div>
+                    <div class="most_fh5co_treding_font_123"> @item.ArticleDate.ToString("dd/MM/yyyy")</div>
+                </div>
+            </div>
+        </a>
+
+
+    }
+

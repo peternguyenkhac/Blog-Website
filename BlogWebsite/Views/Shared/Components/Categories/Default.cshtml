@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Category>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto d-flex justify-content-center w-100">
+        <li class="nav-item home">
+            <a class="nav-link" href="/">
+                <i class="fa fa-home fa-lg"></i>
+                <span class="sr-only">(current)</span>
+            </a>
+        </li>
+        @foreach (var item in Model)
+        {
+            <li class="nav-item ">
+                @Html.ActionLink(item.CategoryName, "GetArticlesByCategory", "Home", new { slug = item.CategoryName.Replace(" ", "-"), id = item.Id }, new { @class = "nav-link" })
+            </li>
+        }
+
+    </ul>
+</div>

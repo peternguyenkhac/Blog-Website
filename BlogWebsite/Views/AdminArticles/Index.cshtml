@@ -1,0 +1,172 @@
+﻿@model IPagedList<BlogWebsite.Models.Article>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý bài viết</h1>
+    <p class="mb-4">Tổng số bài viết: <span class="text-primary">@Model.TotalItemCount</span> </p>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary d-inline-block">Danh sách bài viết</h6>
+            <a class="btn btn-primary ml-5" href="/Admin/CreateArticle" role="button">Thêm bài viết</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive-md">
+
+                <form action="/Admin/Articles" method="get" onsubmit="removeNullEmptyInputs()">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="q">Search</label>
+
+                            @if (string.IsNullOrEmpty(ViewBag.SearchString))
+                            {
+                                <input type="text" class="form-control" id="q" name="q" placeholder="Nhập..." value="" />
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="q" name="q" placeholder="Nhập..." value=@ViewBag.SearchString />
+                            }
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="CategoryId" class="control-label">Category</label>
+                            <select for="CategoryId" name="CategoryId" class="form-control" asp-items="ViewBag.CategorySelectlist">
+                                <option value="">Please Select</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="sortOrder" class="control-label">Order by</label>
+                            <select for="sortOrder" name="sortOrder" class="form-control" asp-items="ViewBag.OrderSelectlist">
+                                <option value="">Please Select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Lọc" class="btn btn-primary" />
+                    </div>
+                </form>
+
+
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Thumb</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <th>Author</th>
+                                <th>Status</th>
+
+                            }
+                            <th>Option</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td class="w-25">@item.ArticleTitle</td>
+                                <td class="text-center"><img src="@item.ArticleThumb" /></td>
+                                <td>@item.Category.CategoryName</td>
+                                <td>@item.ArticleDate.ToString("dd/MM/yyyy")</td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <td>@item.Author.UserName</td>
+                                    <td>
+                                        <div class="custom-control custom-switch">
+                                            @if (item.ArticleStatus == true)
+                                            {
+                                                <input class="custom-control-input" type="checkbox" checked id="@item.Id" onclick="changeStatus(@item.Id)">
+                                                <label class="custom-control-label" for="@item.Id">&nbsp;</label>
+                                            }
+                                            else
+                                            {
+                                                <input class="custom-control-input" type="checkbox" id="@item.Id" onclick="changeStatus(@item.Id)">
+                                                <label class="custom-control-label" for="@item.Id">&nbsp;</label>
+                                            }
+                                        </div>
+                                    </td>
+                                }
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                    <a onclick="deleteArticleFunction(@item.Id)" href="#" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                                </td>
+                            </tr>
+                        }
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            @Html.Partial("PaginationAdminPartial")
+        </div>
+
+    </div>
+
+</div>
+<script>
+    function removeNullEmptyInputs() {
+        var inputs = document.getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].value == "") {
+                inputs[i].remove();
+            }
+        }
+        var selects = document.querySelectorAll('select');
+        for (var i = 0; i < selects.length; i++) {
+            if (selects[i].value == "") {
+                selects[i].remove();
+            }
+        }
+    }
+
+    function deleteArticleFunction(id) {
+        $('#deleteModal .btn-primary').attr('href', '/Admin/DeleteArticle/' + id);
+    }
+
+    function changeStatus(id) {
+        $.ajax({
+            url: '/Admin/ActiveArticle/' + id,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $.toast({
+                title: 'Thành công',
+                content: data,
+                type: 'success',
+                delay: 3000,
+                dismissible: true
+            })
+            },
+            error: function (xhr, status, error) {
+                $.toast({
+                    title: 'Thất bại',
+                    content: 'Thay đổi trạng thái bài viết thất bại',
+                    type: 'error',
+                    delay: 3000,
+                    dismissible: true
+                });
+                $("#" + id).prop("checked", function (i, value) {
+                    return !value;
+                });
+            }
+        });
+    }
+
+
+</script>

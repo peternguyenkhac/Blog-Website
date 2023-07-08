@@ -1,0 +1,98 @@
+﻿@model BlogWebsite.Models.User
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Details";
+}
+
+<div class="container-fluid pl-5">
+    <h1>Thông tin cá nhân</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form id="Details" asp-action="Details" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="UserName" class="control-label"></label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserEmail" class="control-label"></label>
+                    <input asp-for="UserEmail" class="form-control" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserLogin" class="control-label"></label>
+                    <input asp-for="UserLogin" class="form-control" />
+                    <span asp-validation-for="UserLogin" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <a onclick="toggleInput()" class="text-white btn btn-primary d-none changeBtn">Thay đổi</a>
+                </div>
+                <div class="form-group">
+                    <input onclick="toggleInput()" type="button" value="Huỷ" class="btn btn-secondary  mr-2" />
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr />
+    <div>
+        <a onclick="changePassword()" class="text-white btn btn-primary mb-2 toggleChangePW">Thay đổi mật khẩu</a>
+    </div>
+    <div class="row changePW d-none">
+        <div class="col-md-4">
+            <form asp-action="ChangePassword" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label for="oldPassword" class="control-label">Mật khẩu cũ</label>
+                    <input type="password" id="oldPassword" name="oldPassword" class="form-control" />
+                    <span></span>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword" class="control-label">Mật khẩu mới</label>
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" />
+                    <span asp-validation-for="UserPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var changeBtn = document.querySelector('.changeBtn');
+    function toggleInput() {
+        var inputs = document.querySelectorAll('#Details div input');
+        console.log(inputs.length)
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].toggleAttribute("readonly");
+            if (inputs[i].classList.contains("btn")) {
+                inputs[i].classList.toggle("d-none");
+            }
+        }
+        changeBtn.classList.toggle("d-none");
+    }
+    function changePassword() {
+        document.querySelector('.changePW').classList.toggle("d-none");
+        var action = document.querySelector('.toggleChangePW');
+        if (action.textContent == "Thay đổi mật khẩu") {
+            action.textContent = "Huỷ";
+        } else {
+            action.textContent = "Thay đổi mật khẩu";
+        }
+    }
+    toggleInput();
+
+
+
+</script>
+
+@section scripts {
+    @Html.Partial("_ValidationScriptsPartial")
+}

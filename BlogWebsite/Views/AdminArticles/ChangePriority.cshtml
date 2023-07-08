@@ -1,0 +1,122 @@
+﻿@model IEnumerable<BlogWebsite.Models.Article>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "BreakingNews";
+}
+
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý trang chủ</h1>
+    <p class="mb-4">Tổng số bài viết: <span class="text-primary">@Model.Count()</span> </p>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary d-inline-block">Danh sách bài viết</h6>
+            <a class="btn btn-primary ml-5" onclick="changePriorityArticleFunction(0, 1, 'Thêm', 'Thêm bài viết vào danh sách ưu tiên')" href="#" data-toggle="modal" data-target="#changePriorityModal">Thêm bài viết</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive-md">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th class="w-25">Title</th>
+                            <th>Thumb</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Option</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td class="w-25">@item.ArticleTitle</td>
+                                <td class="text-center"><img src="@item.ArticleThumb" /></td>
+                                <td>@item.Category.CategoryName</td>
+                                <td>@item.ArticleDate.ToString("dd/MM/yyyy")</td>
+                                <td>@item.Author.UserName</td>
+                                <td>
+                                    <div class="custom-control custom-switch">
+                                        @if (item.ArticleStatus == true)
+                                        {
+                                            <input class="custom-control-input" type="checkbox" checked id="@item.Id" onclick="changeStatus(@item.Id)">
+                                            <label class="custom-control-label" for="@item.Id">&nbsp;</label>
+                                        }
+                                        else
+                                        {
+                                            <input class="custom-control-input" type="checkbox" id="@item.Id" onclick="changeStatus(@item.Id)">
+                                            <label class="custom-control-label" for="@item.Id">&nbsp;</label>
+                                        }
+                                    </div>
+                                </td>
+                                <td>@item.ArticlePriority</td>
+                                <td>
+                                    <a onclick="changePriorityArticleFunction(@item.Id, @item.ArticlePriority, 'Sửa', 'Thay đổi độ ưu tiên' )" href="#" data-toggle="modal" data-target="#changePriorityModal">Edit</a> |
+                                    <a onclick="changePriorityArticleFunction(@item.Id, 0, 'Xoá', 'Xoá bài viết khỏi danh sách ưu tiên')" href="#" data-toggle="modal" data-target="#changePriorityModal">Delete</a>
+                                </td>
+                            </tr>
+                        }
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    function changePriorityArticleFunction(id, priority, title, msg) {
+        if (priority == 0) {
+            $('#changePriorityModal #priority').hide();
+        }
+        if (id != 0) {
+            $('#changePriorityModal #id').val(id);
+            $('#changePriorityModal #id').attr('type', 'hidden');
+        }
+        $('#changePriorityModal #priority').val(priority);
+        $('#changePriorityModal h5').text(title);
+        $('#changePriorityModal .modal-body').text(msg);
+    }
+
+    function changeStatus(id) {
+        $.ajax({
+            url: '/Admin/ActiveArticle/' + id,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $.toast({
+                    title: 'Thành công',
+                    content: data,
+                    type: 'success',
+                    delay: 3000,
+                    dismissible: true
+                })
+            },
+            error: function (xhr, status, error) {
+                $.toast({
+                    title: 'Thất bại',
+                    content: 'Thay đổi trạng thái bài viết thất bại',
+                    type: 'error',
+                    delay: 3000,
+                    dismissible: true
+                });
+                $("#" + id).prop("checked", function (i, value) {
+                    return !value;
+                });
+            }
+        });
+    }
+
+</script>

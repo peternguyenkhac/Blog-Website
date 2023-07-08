@@ -1,0 +1,40 @@
+﻿@model PagedList.IPagedList<BlogWebsite.Models.Article>
+@using PagedList.Mvc
+@using PagedList
+
+<div class="row mx-0 animate-box m-auto" data-animate-effect="fadeInUp">
+    <div class="col-12 text-center pb-4 pt-4">
+        @if (Model.HasPreviousPage)
+        {
+
+            <a class="btn_mange_pagging" href="@Url.Action(ViewData["Title"].ToString(), new { page = Model.PageNumber - 1, q = ViewBag.SearchString })">Previous</a>
+
+        }
+        else
+        {
+            <a class="btn_mange_pagging" href="#">Previous</a>
+        }
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            if (i == Model.PageNumber)
+            {
+                <a class="btn_pagging active" href="@Url.Action(ViewData["Title"].ToString(), new { page = i, q = ViewBag.SearchString })">@i</a>
+            }
+            else
+            {
+                <a class="btn_pagging" href="@Url.Action(ViewData["Title"].ToString(), new { page = i, q = ViewBag.SearchString })">@i</a>
+            }
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <a class="btn_mange_pagging" href="@Url.Action(ViewData["Title"].ToString(), new { page = Model.PageNumber + 1, q = ViewBag.SearchString })">Next</a>
+        }
+        else
+        {
+            <a class="btn_mange_pagging" href="#">Next</a>
+        }
+    </div>
+
+</div>

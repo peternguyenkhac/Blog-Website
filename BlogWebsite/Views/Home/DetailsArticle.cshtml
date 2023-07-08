@@ -1,0 +1,72 @@
+﻿@model BlogWebsite.Models.Article
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "DetailsArticle";
+}
+
+<div class="page-title">
+    <img src="@Model.ArticleThumb">
+</div>
+<div id="fh5co-single-content" class="container-fluid pb-4 pt-4 paddding">
+    <div class="container paddding">
+        <div class="row mx-0 justify-content-around">
+            <div class="col-md-8 animate-box" data-animate-effect="fadeInLeft">
+                <div class="page-title">
+                    <a class="h5" href="@Url.ActionLink("GetArticlesByCategory", "Home", new {slug = Model.Category.CategoryName.Replace(" ","-"), id = Model.CategoryId})"><span class="badge badge-danger d-inline-block">@Model.Category.CategoryName</span></a>
+                    <span class="h6 date">@Model.ArticleDate.ToString("dd/MM/yyy")</span>
+                    <h2>@Model.ArticleTitle</h2>
+                </div>
+                <div class="col-md-12 animate-box fadeInLeft animated-fast" data-animate-effect="fadeInLeft" style="word-wrap: break-word; white-space: pre-wrap; overflow:hidden">
+                    @Html.Raw(Model.ArticleContent)
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        @if (ViewBag.IsLiked)
+                        {
+                            <button id="like" class="btn btn-primary" onclick="Like(@Model.Id)">
+                                <i class="fa-regular fa-thumbs-up fa-lg"></i>
+                                <span class="ml-1">@Model.LikeCounts</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button id="like" class="btn btn-secondary" onclick="Like(@Model.Id)">
+                                <i class="fa-regular fa-thumbs-up fa-lg"></i>
+                                <span class="ml-1">@Model.LikeCounts</span>
+                            </button>
+                        }
+
+                    </div>
+                    <h6 class="author mt-auto">@Model.Author.UserName</h6>
+                </div>
+            </div>
+            <div class="col-md-3 pt-5 animate-box" data-animate-effect="fadeInRight">
+                @await Component.InvokeAsync("MostPopular")
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function Like(id) {
+        $.ajax({
+            url: '/Like/' + id,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                var likecount = parseInt($('#like').children('span').text());
+                if ($('#like').hasClass('btn-secondary')) {
+                    likecount++;
+                } else {
+                    likecount--;
+                }
+                $('#like').toggleClass("btn-primary btn-secondary");
+                $('#like').children('span').text(likecount);
+            },
+            error: function (xhr, status, error) {
+
+            }
+        });
+    }
+</script>

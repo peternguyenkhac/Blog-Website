@@ -1,0 +1,79 @@
+﻿@model PagedList.IPagedList<BlogWebsite.Models.Article>
+@using PagedList.Mvc
+@using PagedList
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Index";
+}
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @await Component.InvokeAsync("BreakingNews")
+}
+
+
+<div class="container-fluid pb-4 pt-4 paddding">
+    <div class="container paddding">
+        <div class="row mx-0">
+            @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+            {
+                <form class="input-group col-md-8 col-8 rounded" action="/">
+                    <input name="q" type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                           aria-describedby="search-addon" />
+                    <button class="rounded-right" type="submit" style="border: none;">
+                        <span class="input-group-text border-0" id="search-addon">
+                            <i class="fa fa-search fa-2x p-2"></i>
+                        </span>
+                    </button>
+                </form>
+                <h3 class="m-5 w-100">Hiển thị kết quả tìm kiếm cho: <span class="text-danger">"@ViewBag.SearchString"</span></h3>
+
+            }
+
+            <div class="col-md-8 animate-box" data-animate-effect="fadeInLeft">
+                <div>
+                    <div class="fh5co_heading fh5co_heading_border_bottom py-2 mb-4">News</div>
+                </div>
+
+                @foreach (var item in Model)
+                {
+                    <div class="row pb-4">
+                        <div class="col-md-5">
+                            <div class="fh5co_hover_news_img">
+                                <div class="fh5co_news_img"><img src="@item.ArticleThumb" alt="" /></div>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 animate-box">
+
+                            <a href="@Url.Action("DetailsArticle", "Home", new {slug = item.ArticleTitle.Replace(" ","-"), id = item.Id })" class="fh5co_magna py-2">
+                                <h4>
+                                    @item.ArticleTitle
+                                </h4>
+                            </a>
+
+                            <h6>
+                                <span class="badge badge-danger">@item.Category.CategoryName </span>
+                                &nbsp;&nbsp;&nbsp;
+                                @item.ArticleDate.ToString("dd/MM/yyyy")
+                            </h6>
+
+                            <div class="fh5co_consectetur">
+                                @item.ArticleDescription
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-md-3 animate-box" data-animate-effect="fadeInRight">
+                @await Component.InvokeAsync("MostPopular")
+            </div>
+
+            @Html.Partial("PaginationPartial")
+
+
+
+
+        </div>
+</div>
+</div>
+
